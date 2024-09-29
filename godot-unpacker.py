@@ -6,7 +6,7 @@ import sys, os, pathlib, mmap, struct, re, argparse
 def main(args):
 
 	parser = argparse.ArgumentParser(description='Simple assets unpacker for Godot game engine')
-	parser.add_argument('file', help="game resource pack e.g. data.pck or game.exe file", type=argparse.FileType('r+b'))
+	parser.add_argument('file', help="game resource pack e.g. data.pck or game.exe file", type=argparse.FileType('rb'))
 	parser.add_argument('--raw', help="do not unpack asset containers (.tex, .stex, .oggstr)", action=argparse.BooleanOptionalAction)
 	parser_args = parser.parse_args(args)
 	
@@ -19,7 +19,7 @@ def main(args):
 	resource_pack_file_name = pathlib.Path(parser_args.file.name).name
 	output_dir = resource_pack_file_name.replace(".", "_")
 	
-	f = mmap.mmap(parser_args.file.fileno(), 0)
+	f = mmap.mmap(parser_args.file.fileno(), 0, access=mmap.ACCESS_READ)
 	parser_args.file.close()
 
 	if f.read(4) == magic:
